@@ -33,7 +33,7 @@ def make_link(base_url, target):
     # browsers never send to the server
     key = AESGCM.generate_key(bit_length=128)
     nonce = os.urandom(12)
-    ct = AESGCM(key).encrypt(nonce, target.encode(), None)
+    ct = AESGCM(key).encrypt(nonce, target.capitalize().encode(), None)
     return f"{base_url}#{b64(key)}.{b64(nonce + ct)}"
 
 
