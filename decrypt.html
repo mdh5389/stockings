@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stocking Exchange</title>
+<body style="font-family: sans-serif; text-align: center; margin-top: 20vh">
+<p>Your stocking recipient is...</p>
+<h1 id="out">🎄</h1>
+<script>
+const unb64 = s => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
+
+(async () => {
+  const out = document.getElementById("out");
+  try {
+    const [k, p] = location.hash.slice(1).split(".");
+    const key = await crypto.subtle.importKey("raw", unb64(k), "AES-GCM", false, ["decrypt"]);
+    const data = unb64(p);
+    const pt = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: data.slice(0, 12) }, key, data.slice(12));
+    out.textContent = new TextDecoder().decode(pt);
+  } catch (e) {
+    out.textContent = "Invalid or incomplete link";
+  }
+})();
+</script>
